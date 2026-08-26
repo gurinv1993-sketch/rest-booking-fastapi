@@ -1,0 +1,18 @@
+# Временные файлы кэша Python (чтобы они больше не появлялись на GitHub)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Виртуальное окружение
+.venv/
+venv/
+ENV/
+env/
+
+# База данных SQLite
+*.db
+*.sqlite3
+
+# Настройки IDE PyCharm
+.idea/
