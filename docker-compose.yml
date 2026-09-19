@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  # Наша основная база данных для разработки (dev)
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: fastapi_postgres_dev
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: my_database
+    ports:
+      - "5432:5432" # Пробрасываем стандартный порт наружу
+
+  # Наша отдельная база данных ТЕСТОВ (для pytest)
+  postgres_test_db:
+    image: postgres:15-alpine
+    container_name: fastapi_postgres_test
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: my_test_database
+    ports:
+      - "5433:5432" # Внутри контейнера порт 5432, но на вашем компьютере он будет доступен как 5433!

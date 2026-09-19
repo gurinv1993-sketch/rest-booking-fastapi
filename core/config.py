@@ -2,9 +2,10 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlalchemy.orm import DeclarativeBase
 from typing import Annotated
 from fastapi import Depends
+import os
 
-# Указываем, что база данных будет храниться в файле booking.db в папке проекта
-DATABASE_URL = "sqlite+aiosqlite:///./booking.db"
+# Загружаем адрес базы из файла .env в память программы
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Создаем асинхронный движок (engine) для работы с файлом БД
 engine = create_async_engine(DATABASE_URL, echo=True)
