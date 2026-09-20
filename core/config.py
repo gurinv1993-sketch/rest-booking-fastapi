@@ -3,6 +3,9 @@ from sqlalchemy.orm import DeclarativeBase
 from typing import Annotated
 from fastapi import Depends
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Загружаем адрес базы из файла .env в память программы
 DATABASE_URL = os.getenv("DATABASE_URL")

@@ -9,6 +9,9 @@ from sqlalchemy.pool import NullPool
 # Импортируем базовую модель (в ней хранится информация обо всех таблицах проекта)
 from core.config import Model, get_db
 from main import app
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Вытаскиваем секретную ссылку на тестовую базу данных из файла .env (из памяти ОС)
 TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL")

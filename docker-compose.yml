@@ -1,7 +1,24 @@
 version: '3.8'
 
 services:
-  # Наша основная база данных для разработки (dev)
+  # веб-приложение на FastAPI
+  web:
+    build: .
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      # Насильно перекрываем localhost на имя сервиса базы данных для Докера
+      - DATABASE_URL=postgresql+asyncpg://user:password@postgres_db:5432/my_database
+      - TEST_DATABASE_URL=postgresql+asyncpg://user:password@postgres_test_db:5432/my_test_database
+    depends_on:
+      - postgres_db
+      - postgres_test_db
+    restart: always
+
+  # основная база данных для разработки (dev)
   postgres_db:
     image: postgres:15-alpine
     container_name: fastapi_postgres_dev
@@ -10,9 +27,11 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: my_database
     ports:
-      - "5432:5432" # Пробрасываем стандартный порт наружу
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
 
-  # Наша отдельная база данных ТЕСТОВ (для pytest)
+  # отдельная база данных ТЕСТОВ (для pytest)
   postgres_test_db:
     image: postgres:15-alpine
     container_name: fastapi_postgres_test
@@ -21,4 +40,10 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: my_test_database
     ports:
-      - "5433:5432" # Внутри контейнера порт 5432, но на вашем компьютере он будет доступен как 5433!
+      - "5433:5432" # Снаружи порт 5433, но внутри контейнера — стандартный 5432!
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_dev_data:
+  postgres_test_data:

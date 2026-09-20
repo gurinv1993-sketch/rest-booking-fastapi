@@ -4,6 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from core.config import engine
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     from core.config import Model
