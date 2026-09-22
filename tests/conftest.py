@@ -43,14 +43,14 @@ async def db_session():
     # 3. Открываем короткое прямое соединение с Postgres для настройки структуры
     async with test_engine.begin() as conn:
         # run_sync запускает синхронный код создания таблиц внутри асинхронного потока.
-        # Команда создает в вашей тестовой Postgres пустые таблицы, описанные в моделях Python.
+        # Команда создает в тестовой Postgres пустые таблицы, описанные в моделях Python.
         await conn.run_sync(Model.metadata.create_all)
 
     # === ЭТАП "ПЕРЕДАЧА В ТЕСТ" ===
     # 4. Открываем рабочую сессию для выполнения CRUD операций
     async with testing_session_local() as session:
-        # yield — это важнейшая команда фикстуры. Она буквально ставит этот код НА ПАУЗУ
-        # и отдает объект session внутрь вашей тест-функции (например, в test_one_creates_data_in_temporary_db).
+        # yield — важнейшая команда фикстуры. Она ставит этот код НА ПАУЗУ
+        # и отдает объект session внутрь тест-функции (например, в test_one_creates_data_in_temporary_db).
         # Пока идет тест, этот код ждет.
         yield session
 

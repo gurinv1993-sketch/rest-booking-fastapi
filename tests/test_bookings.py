@@ -1,8 +1,11 @@
-from datetime import timedelta, date
+from datetime import timedelta, date, time
 import pytest
 from freezegun import freeze_time
 from httpx import AsyncClient
 from sqlalchemy import Boolean
+
+from models.booking import Visitors
+
 
 def preparation_date(day: int = 0, addition: bool = True) -> str:
     today = date.today()
@@ -67,3 +70,35 @@ async def test_error_conflict_in_add_task(ac: AsyncClient):
     res = await ac.post("/bookings", json=temp)
     print("ТЕКСТ ОТВЕТА СЕРВЕРА:", res.text)
     assert res.status_code == 409
+
+
+@pytest.fixture
+async def create_a_database_record(db_session):
+    record = Visitors(name = "Мира", phone = "+79999999999",
+     booking_date = date.fromisoformat(preparation_date(1)), booking_time = time(19, 00), guests = 8)
+    db_session.add(record)
+    await db_session.commit()
+    await db_session.refresh(record)
+    return record
+
+async def test_get_bookings(ac: AsyncClient):
+    res = await ac.get("/bookings")
+    print("ТЕКСТ ОТВЕТА СЕРВЕРА:", res.text)
+    assert res.status_code == 200
+    data = res.json()
+    assert isinstance(data, list)
+
+async def test_with_date_get_bookings(ac: AsyncClient, create_a_database_record):
+    res = await ac.get("/bookings", params={"booking_date": preparation_date(1)})
+    print("ТЕКСТ ОТВЕТА СЕРВЕРА:", res.text)
+    assert res.status_code == 200
+    data = res.json()
+    assert len(data) == 1
+    assert data[0]["name"] == "Мира"
+
+
+
+
+
+
+
